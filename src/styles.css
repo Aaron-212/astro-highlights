@@ -1,0 +1,25 @@
+pre.astro-highlights {
+  color-scheme: light dark;
+  color: var(--hls-light);
+  background-color: var(--hls-light-bg);
+  overflow-x: auto;
+}
+
+pre.astro-highlights .line > span {
+  color: var(--hls-light);
+  font-style: var(--hls-light-font-style, normal);
+  font-weight: var(--hls-light-font-weight, normal);
+}
+
+@media (prefers-color-scheme: dark) {
+  pre.astro-highlights {
+    color: var(--hls-dark);
+    background-color: var(--hls-dark-bg);
+  }
+
+  pre.astro-highlights .line > span {
+    color: var(--hls-dark);
+    font-style: var(--hls-dark-font-style, normal);
+    font-weight: var(--hls-dark-font-weight, normal);
+  }
+}
