@@ -36,8 +36,7 @@ Pass Zed-compatible theme objects, language aliases, or additional languages to 
 
 ```ts
 import highlights from "@aaron212/astro-highlights";
-import githubDark from "@pierre/highlights/themes/github-dark";
-import githubLight from "@pierre/highlights/themes/github-light";
+import { githubDark, githubLight } from "@aaron212/astro-highlights/themes";
 import { defineConfig } from "astro/config";
 
 export default defineConfig({
@@ -52,6 +51,10 @@ export default defineConfig({
 ```
 
 The default themes are Pierre Light and Pierre Dark. When providing `themes`, include both `light` and `dark`.
+Import bundled themes and the `Theme` and `ThemeFamily` types from `@aaron212/astro-highlights/themes`; you do not need to
+install `@pierre/highlights` separately. This entry point also re-exports the upstream `cssVariables` theme and `toCSS()`
+helper.
+
 `excludeLangs` adds to the built-in `math` and `mermaid` exclusions and matches the original fence language before aliases.
 Highlights supports its built-in lexers; this integration does not apply Shiki grammars, transformers, or fence metadata
 such as highlighted-line ranges. Fence metadata remains available to downstream HAST plugins.

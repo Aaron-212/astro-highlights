@@ -28,7 +28,11 @@
       "types": "./dist/satteri.d.ts",
       "import": "./dist/satteri.js"
     },
-    "./styles.css": "./src/styles.css"
+    "./styles.css": "./src/styles.css",
+    "./themes": {
+      "types": "./dist/themes.d.ts",
+      "import": "./dist/themes.js"
+    }
   },
   "scripts": {
     "build": "tsc",
