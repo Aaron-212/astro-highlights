@@ -27,8 +27,28 @@ Astro 7 uses Sätteri by default. The integration adds its HAST plugin, loads it
 integration replaces the processor, place `highlights()` after it.
 
 Fenced and indented code blocks receive highlighting. Unknown languages render as plain text. Math and Mermaid blocks
-remain untouched so other plugins can render them. Astro's built-in `<Code />` component is outside this integration's
-scope.
+remain untouched so other plugins can render them. Use this package's `<Highlights />` component for code in `.astro` files.
+
+## Highlight code in Astro components
+
+Import `Highlights.astro` and pass your source code and language:
+
+```astro
+---
+import Highlights from "@aaron212/astro-highlights/components/Highlights.astro";
+---
+
+<Highlights code={'const greeting = "Hello, world!";'} lang="ts" />
+```
+
+The component renders on the server and imports its stylesheet directly. It works without the Markdown integration and
+with Astro's ClientRouter. Source code is escaped as text, including HTML tags.
+
+The default language is plain text; unknown languages also fall back to plain text. The default themes are Pierre Light
+and Pierre Dark. Pass `themes={{ light: githubLight, dark: githubDark }}` to override both themes using imports from
+`@aaron212/astro-highlights/themes`. Integration options configure Markdown; component themes are configured through props.
+Standard `<pre>` attributes, including `class`, `style`, and `aria-label`, are forwarded. Code blocks are keyboard-focusable
+by default; pass `tabindex` to override this.
 
 ## Configure highlighting
 

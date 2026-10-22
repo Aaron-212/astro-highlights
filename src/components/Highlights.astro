@@ -1,0 +1,42 @@
+---
+import { codeToTokens, isSupportedLanguage, type Theme, type ThemeFamily } from "@pierre/highlights";
+import pierreDark from "@pierre/highlights/themes/pierre-dark";
+import pierreLight from "@pierre/highlights/themes/pierre-light";
+import type { HTMLAttributes } from "astro/types";
+import "../styles.css";
+
+export interface Props extends Omit<HTMLAttributes<"pre">, "lang"> {
+  /** Source code, rendered as escaped text. */
+  code: string;
+  /** A Highlights language or alias. Unknown languages render as plain text. */
+  lang?: string;
+  /** Defaults to Pierre Light and Pierre Dark. */
+  themes?: {
+    light: Theme | ThemeFamily;
+    dark: Theme | ThemeFamily;
+  };
+}
+
+const {
+  code,
+  lang = "plaintext",
+  themes = { light: pierreLight, dark: pierreDark },
+  class: className,
+  style,
+  tabindex = 0,
+  ...attributes
+} = Astro.props;
+const result = codeToTokens(code, {
+  lang: isSupportedLanguage(lang) ? lang : "plaintext",
+  themes,
+  defaultColor: false,
+});
+const themeStyles = Object.fromEntries(
+  (result.rootStyle ?? "").split(";").map((declaration) => declaration.split(":")),
+);
+const preStyle = typeof style === "string" ? `${result.rootStyle};${style}` : { ...themeStyles, ...style };
+---
+
+<pre {...attributes} class:list={["astro-highlights", className]} style={preStyle} tabindex={tabindex}><code
+    class={`language-${lang}`}
+  >{result.tokens.map((line, index) => <Fragment>{index > 0 ? "\n" : ""}<span class="line">{line.map((token) => <span style={token.htmlStyle}>{token.content}</span>)}</span></Fragment>)}</code></pre>

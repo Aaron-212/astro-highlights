@@ -16,6 +16,7 @@
   },
   "files": [
     "dist",
+    "src/components/*.astro",
     "src/styles.css"
   ],
   "type": "module",
@@ -24,6 +25,7 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
+    "./components/Highlights.astro": "./src/components/Highlights.astro",
     "./satteri": {
       "types": "./dist/satteri.d.ts",
       "import": "./dist/satteri.js"
@@ -36,7 +38,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "check": "tsc --noEmit",
+    "check": "tsc --noEmit && astro check --tsconfig tsconfig.astro.json",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
     "lint": "oxlint"
@@ -47,6 +49,7 @@
     "satteri": "^0.10.5"
   },
   "devDependencies": {
+    "@astrojs/check": "^0.9.11",
     "@types/hast": "^3.0.5",
     "astro": "^7.3.8",
     "oxfmt": "^0.73.0",
