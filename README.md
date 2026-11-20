@@ -31,15 +31,19 @@ remain untouched so other plugins can render them. Use this package's `<Highligh
 
 ## Highlight code in Astro components
 
-Import `Highlights.astro` and pass your source code and language:
+Import `Highlights.astro` and use `is:raw` to write literal source code between the component's tags.
 
 ```astro
 ---
 import Highlights from "@aaron212/astro-highlights/components/Highlights.astro";
 ---
 
-<Highlights code={'const greeting = "Hello, world!";'} lang="ts" />
+<Highlights is:raw lang="ts">
+const greeting = { text: "Hello, world!" };
+</Highlights>
 ```
+
+For dynamic source, pass `code={source}`. The `code` prop takes precedence over the slot, including when empty.
 
 The component renders on the server and imports its stylesheet directly. It works without the Markdown integration and
 with Astro's ClientRouter. Source code is escaped as text, including HTML tags.

@@ -6,8 +6,8 @@ import type { HTMLAttributes } from "astro/types";
 import "../styles.css";
 
 export interface Props extends Omit<HTMLAttributes<"pre">, "lang"> {
-  /** Source code, rendered as escaped text. */
-  code: string;
+  /** Source code. Takes precedence over the default slot, including when empty. */
+  code?: string;
   /** A Highlights language or alias. Unknown languages render as plain text. */
   lang?: string;
   /** Defaults to Pierre Light and Pierre Dark. */
@@ -26,7 +26,8 @@ const {
   tabindex = 0,
   ...attributes
 } = Astro.props;
-const result = codeToTokens(code, {
+const source = code ?? (await Astro.slots.render("default")) ?? "";
+const result = codeToTokens(source, {
   lang: isSupportedLanguage(lang) ? lang : "plaintext",
   themes,
   defaultColor: false,
