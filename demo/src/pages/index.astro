@@ -58,13 +58,7 @@ export default defineConfig({
       <p>
         <code>&lt;Highlights&gt;</code> renders this HTML example with the GitHub Light and Dark themes.
       </p>
-      <Highlights
-        code={html}
-        lang="html"
-        themes={{ light: githubLight, dark: githubDark }}
-        role="region"
-        aria-label="HTML example with GitHub themes"
-      />
+      <Highlights code={html} lang="html" title="article.html" themes={{ light: githubLight, dark: githubDark }} />
     </section>
 
     <section class="space-y-3" aria-labelledby="long-codes">

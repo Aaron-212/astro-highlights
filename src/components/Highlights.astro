@@ -3,6 +3,7 @@ import { codeToTokens, isSupportedLanguage, type Theme, type ThemeFamily } from 
 import pierreDark from "@pierre/highlights/themes/pierre-dark";
 import pierreLight from "@pierre/highlights/themes/pierre-light";
 import type { HTMLAttributes } from "astro/types";
+import CodeFrame from "./CodeFrame.astro";
 import "../styles.css";
 
 export interface Props extends Omit<HTMLAttributes<"pre">, "lang"> {
@@ -10,6 +11,8 @@ export interface Props extends Omit<HTMLAttributes<"pre">, "lang"> {
   code?: string;
   /** A Highlights language or alias. Unknown languages render as plain text. */
   lang?: string;
+  /** Filename to display above the code in a frame. */
+  title?: string;
   /** Defaults to Pierre Light and Pierre Dark. */
   themes?: {
     light: Theme | ThemeFamily;
@@ -20,6 +23,7 @@ export interface Props extends Omit<HTMLAttributes<"pre">, "lang"> {
 const {
   code,
   lang = "plaintext",
+  title,
   themes = { light: pierreLight, dark: pierreDark },
   class: className,
   style,
@@ -40,8 +44,20 @@ const themeStyles = Object.fromEntries(
   (result.rootStyle ?? "").split(";").map((declaration) => declaration.split(":")),
 );
 const preStyle = typeof style === "string" ? `${result.rootStyle};${style}` : { ...themeStyles, ...style };
+const caption = title?.trim() || undefined;
+const role = attributes.role ?? (caption ? "region" : undefined);
+const label = attributes["aria-label"] ?? (attributes["aria-labelledby"] ? undefined : caption);
 ---
 
-<pre {...attributes} class:list={["astro-highlights", className]} style={preStyle} tabindex={tabindex}><code
-    class={`language-${lang}`}
-  >{result.tokens.map((line, index) => <Fragment>{index > 0 ? "\n" : ""}<span class="line">{line.map((token) => <span style={token.htmlStyle}>{token.content}</span>)}</span></Fragment>)}</code></pre>
+<CodeFrame title={caption}>
+  <pre
+    {...attributes}
+    class:list={["astro-highlights", className]}
+    style={preStyle}
+    tabindex={tabindex}
+    role={role}
+    aria-label={label}
+  ><code
+      class={`language-${lang}`}
+    >{result.tokens.map((line, index) => <Fragment>{index > 0 ? "\n" : ""}<span class="line">{line.map((token) => <span style={token.htmlStyle}>{token.content}</span>)}</span></Fragment>)}</code></pre>
+</CodeFrame>

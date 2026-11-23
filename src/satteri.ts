@@ -14,6 +14,19 @@ export interface HighlightsOptions {
   excludeLangs?: string[];
 }
 
+function getFenceTitle(meta: unknown): string | undefined {
+  if (typeof meta !== "string") return;
+
+  // Read whole metadata tokens so a quoted option value cannot contain a separate title option.
+  const tokens = meta.matchAll(/(?:[^\s"']|"[^"]*(?:"|$)|'[^']*(?:'|$))+/g);
+  for (const [token] of tokens) {
+    const title = /^title=(?:"([^"]*)"|'([^']*)')$/.exec(token);
+    if (title) {
+      return (title[1] ?? title[2]).trim() || undefined;
+    }
+  }
+}
+
 export function highlightsHast(options: HighlightsOptions = {}): HastPluginDefinition {
   const themes = options.themes ?? { light: pierreLight, dark: pierreDark };
   const excluded = new Set(["math", "mermaid", ...(options.excludeLangs ?? [])]);
@@ -64,7 +77,7 @@ export function highlightsHast(options: HighlightsOptions = {}): HastPluginDefin
           });
         }
 
-        return {
+        const pre: Element = {
           ...node,
           properties: {
             ...node.properties,
@@ -73,6 +86,26 @@ export function highlightsHast(options: HighlightsOptions = {}): HastPluginDefin
             style: [node.properties.style, result.rootStyle].filter(Boolean).join(";"),
           },
           children: [{ ...code, children }],
+        };
+        const title = getFenceTitle(code.data && "meta" in code.data ? code.data.meta : undefined);
+        if (!title) return pre;
+
+        pre.properties.role ??= "region";
+        if (pre.properties.ariaLabelledBy == null) pre.properties.ariaLabel ??= title;
+
+        return {
+          type: "element",
+          tagName: "figure",
+          properties: { className: ["astro-highlights-frame"] },
+          children: [
+            {
+              type: "element",
+              tagName: "figcaption",
+              properties: {},
+              children: [{ type: "text", value: title }],
+            },
+            pre,
+          ],
         };
       },
     },

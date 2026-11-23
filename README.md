@@ -29,6 +29,19 @@ integration replaces the processor, place `highlights()` after it.
 Fenced and indented code blocks receive highlighting. Unknown languages render as plain text. Math and Mermaid blocks
 remain untouched so other plugins can render them. Use this package's `<Highlights />` component for code in `.astro` files.
 
+## Add a filename to a code block
+
+Add `title="filename"` to the opening fence to display the filename above the code in a frame. Use single or double quotes
+around the title. If the filename contains a quote, use the other quote style around it.
+
+````markdown
+```ts title="src/config.ts"
+export const port = 4321;
+```
+````
+
+For code in `.astro` files, pass `title="src/config.ts"` to `<Highlights />`.
+
 ## Highlight code in Astro components
 
 Import `Highlights.astro` and use `is:raw` to write literal source code between the component's tags.

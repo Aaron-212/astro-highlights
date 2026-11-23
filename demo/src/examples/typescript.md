@@ -1,4 +1,4 @@
-```ts
+```ts title="src/articles.ts"
 interface Article {
   title: string;
   published: boolean;
