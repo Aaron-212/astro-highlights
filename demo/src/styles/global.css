@@ -1,0 +1,16 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    color-scheme: light dark;
+    @apply bg-white text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100;
+  }
+
+  a {
+    @apply underline underline-offset-4;
+  }
+}
+
+pre.astro-highlights {
+  @apply rounded-lg border border-zinc-200 p-4 text-sm leading-6 dark:border-zinc-800;
+}

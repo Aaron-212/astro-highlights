@@ -1,0 +1,33 @@
+{
+  "name": "astro-highlights-demo",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "preinstall": "pnpm --dir .. install --frozen-lockfile --prod=false",
+    "dev": "pnpm --dir .. run build && astro dev",
+    "build": "pnpm --dir .. run build && astro build",
+    "check": "pnpm --dir .. run build && astro check",
+    "format": "oxfmt",
+    "lint": "oxlint",
+    "build:preview": "astro preview",
+    "deploy": "pnpm run build && cf deploy ./build",
+    "preview": "pnpm run build && cf previews deploy ./build"
+  },
+  "dependencies": {
+    "@aaron212/astro-highlights": "link:..",
+    "astro": "^7.4.13"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.12",
+    "@tailwindcss/vite": "^4.3.5",
+    "cf": "1.0.0-rc.2",
+    "oxfmt": "^0.79.0",
+    "oxlint": "^1.94.0",
+    "tailwindcss": "^4.3.5",
+    "typescript": "^6.0.3"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "packageManager": "pnpm@12.10.1"
+}

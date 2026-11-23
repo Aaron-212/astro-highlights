@@ -1,0 +1,28 @@
+---
+import "@/styles/global.css";
+
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="description" content="Server-side syntax highlighting for Markdown and Astro with Pierre Highlights." />
+    <title>{title}</title>
+  </head>
+  <body class="flex min-h-dvh flex-col px-4">
+    <main class="mx-auto w-full max-w-3xl flex-1 py-10 sm:py-16">
+      <slot />
+    </main>
+    <footer class="mx-auto w-full max-w-3xl border-t border-zinc-200 py-6 text-sm dark:border-zinc-800">
+      <a href="https://aaron212.com/">Aaron212</a>
+    </footer>
+  </body>
+</html>

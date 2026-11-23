@@ -1,0 +1,89 @@
+---
+import Highlights from "@aaron212/astro-highlights/components/Highlights.astro";
+import { githubDark, githubLight } from "@aaron212/astro-highlights/themes";
+import { Content as LineNumbers } from "@/examples/line-numbers.md";
+import { Content as TypeScript } from "@/examples/typescript.md";
+import { Content as LongCodes } from "@/examples/long-codes.md";
+import Layout from "@/layouts/Layout.astro";
+
+const html = `<article class="post">
+  <h2>Field notes</h2>
+  <p>A few things we learned along the way.</p>
+</article>`;
+
+const install = "pnpm add @aaron212/astro-highlights";
+const config = `import highlights from "@aaron212/astro-highlights";
+import { defineConfig } from "astro/config";
+
+export default defineConfig({
+  integrations: [highlights()],
+});`;
+---
+
+<Layout title="Astro Highlights demo">
+  <header class="space-y-4">
+    <h1 class="text-4xl font-semibold tracking-tight sm:text-5xl">Astro Highlights</h1>
+    <p class="text-lg">
+      Server-side syntax highlighting for Astro 7 and Sätteri. Code blocks render with&#32;
+      <a href="https://diffs.com/highlights">Pierre Highlights</a> and follow your device's color scheme.
+    </p>
+    <nav class="flex flex-wrap gap-x-5 gap-y-2" aria-label="Project links">
+      <a href="https://www.npmjs.com/package/@aaron212/astro-highlights">npm</a>
+      <a href="https://github.com/Aaron-212/astro-highlights">GitHub</a>
+    </nav>
+  </header>
+
+  <div class="mt-10 space-y-10">
+    <section class="space-y-3" aria-labelledby="markdown">
+      <h2 id="markdown" class="text-xl font-semibold">
+        TypeScript in Markdown
+      </h2>
+      <TypeScript />
+    </section>
+
+    <section class="space-y-3" aria-labelledby="line-numbers">
+      <h2 id="line-numbers" class="text-xl font-semibold">
+        Line numbers
+      </h2>
+      <p>
+        Add <code>lineNumbers=true</code> to the opening fence to number its lines.
+      </p>
+      <LineNumbers />
+    </section>
+
+    <section class="space-y-3" aria-labelledby="astro-component">
+      <h2 id="astro-component" class="text-xl font-semibold">
+        Astro component
+      </h2>
+      <p>
+        <code>&lt;Highlights&gt;</code> renders this HTML example with the GitHub Light and Dark themes.
+      </p>
+      <Highlights
+        code={html}
+        lang="html"
+        themes={{ light: githubLight, dark: githubDark }}
+        role="region"
+        aria-label="HTML example with GitHub themes"
+      />
+    </section>
+
+    <section class="space-y-3" aria-labelledby="long-codes">
+      <h2 id="long-codes" class="text-xl font-semibold">
+        Long codes
+      </h2>
+      <LongCodes />
+    </section>
+
+    <section class="space-y-3 border-t border-zinc-200 pt-8 dark:border-zinc-800" aria-labelledby="usage">
+      <h2 id="usage" class="text-xl font-semibold">
+        Use in Astro
+      </h2>
+      <p>Install the package in your Astro project.</p>
+      <Highlights code={install} lang="sh" role="region" aria-label="Install command" />
+      <p>
+        Add the integration to <code>astro.config.ts</code>.
+      </p>
+      <Highlights code={config} lang="ts" role="region" aria-label="Astro configuration" />
+    </section>
+  </div>
+</Layout>
