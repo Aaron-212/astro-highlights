@@ -1,7 +1,7 @@
 # astro-highlights
 
 Highlight Markdown and Sätteri-backed MDX code blocks in Astro 7 with `@pierre/highlights`. Highlighting runs on the server;
-the browser receives HTML and CSS. Light and dark colors follow your device preferences.
+light and dark colors follow your device preferences.
 
 ## Use in Astro
 
@@ -41,6 +41,8 @@ export const port = 4321;
 ````
 
 For code in `.astro` files, pass `title="src/config.ts"` to `<Highlights />`.
+
+The code block header includes a **Copy** button with or without a filename. Clipboard access requires HTTPS or localhost.
 
 ## Display line numbers
 
@@ -134,6 +136,12 @@ Import the stylesheet in your site's entry point or layout:
 
 ```ts
 import "@aaron212/astro-highlights/styles.css";
+```
+
+To enable the **Copy** button, import the clipboard script in your browser entry point.
+
+```ts
+import "@aaron212/astro-highlights/copy";
 ```
 
 ## Develop

@@ -1,16 +1,28 @@
 ---
+import copyUrl from "@aaron212/astro-highlights/copy?url&no-inline";
+
 interface Props {
   title?: string;
 }
 
 const { title } = Astro.props;
+const Frame = title ? "figure" : "div";
+const Header = title ? "figcaption" : "div";
 ---
 
-{title ? (
-  <figure class="astro-highlights-frame">
-    <figcaption>{title}</figcaption>
-    <slot />
-  </figure>
-) : (
+<Frame class="astro-highlights-frame">
+  <Header class="astro-highlights-header" hidden={!title}>
+    {title && <span class="astro-highlights-title">{title}</span>}
+    <span class="astro-highlights-copy-controls">
+      <button
+        type="button"
+        data-astro-highlights-copy
+        aria-label={title ? `Copy code from ${title}` : "Copy code"}
+        hidden
+      ></button>
+      <span class="astro-highlights-copy-status" role="status"></span>
+    </span>
+  </Header>
   <slot />
-)}
+  <script is:inline type="module" src={copyUrl}></script>
+</Frame>

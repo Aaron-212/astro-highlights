@@ -45,7 +45,7 @@ pre.astro-highlights .line > .astro-highlights-line-number {
   background-color: inherit;
 }
 
-.astro-highlights-frame {
+.astro-highlights-frame:has(> .astro-highlights-header:not([hidden])) {
   color-scheme: light dark;
   min-inline-size: 0;
   margin-inline: 0;
@@ -53,8 +53,11 @@ pre.astro-highlights .line > .astro-highlights-line-number {
   border-radius: 0.5rem;
 }
 
-.astro-highlights-frame > figcaption {
-  padding: 0.5rem 1rem;
+.astro-highlights-header:not([hidden]) {
+  display: flex;
+  align-items: start;
+  gap: 0.75rem;
+  padding: 0.5rem;
   border-block-end: 1px solid light-dark(#d4d4d4, #404040);
   border-radius: 0.5rem 0.5rem 0 0;
   color: light-dark(#262626, #e5e5e5);
@@ -65,7 +68,74 @@ pre.astro-highlights .line > .astro-highlights-line-number {
   overflow-wrap: anywhere;
 }
 
-.astro-highlights-frame > pre.astro-highlights {
+.astro-highlights-title {
+  align-self: center;
+  padding-inline-start: 0.5rem;
+}
+
+.astro-highlights-copy-controls {
+  position: relative;
+  display: flex;
+  flex: none;
+  margin-inline-start: auto;
+}
+
+[data-astro-highlights-copy],
+.astro-highlights-copy-status {
+  padding-inline: 0.5rem;
+  border: 1px solid light-dark(#d4d4d4, #737373);
+  border-radius: 0.25rem;
+  color: inherit;
+  background-color: light-dark(#fff, #171717);
+  font: inherit;
+}
+
+[data-astro-highlights-copy]:not([hidden]) {
+  display: inline-grid;
+  place-items: center;
+  min-inline-size: 24px;
+  min-block-size: 24px;
+  padding: 0;
+  cursor: pointer;
+}
+
+[data-astro-highlights-copy]::before {
+  content: "";
+  inline-size: 1rem;
+  block-size: 1rem;
+  background-color: currentColor;
+  mask: url("./icons/copy.svg") center / contain no-repeat;
+  pointer-events: none;
+  forced-color-adjust: none;
+}
+
+[data-astro-highlights-copy-state="success"]::before {
+  mask-image: url("./icons/check.svg");
+}
+
+[data-astro-highlights-copy-state="failure"]::before {
+  mask-image: url("./icons/x.svg");
+}
+
+[data-astro-highlights-copy]:hover {
+  background-color: light-dark(#e5e5e5, #404040);
+}
+
+.astro-highlights-copy-status {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-end: calc(100% + 0.375rem);
+  translate: 0 -50%;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.astro-highlights-copy-status:empty,
+[data-astro-highlights-copy-state="success"] + .astro-highlights-copy-status {
+  opacity: 0;
+}
+
+.astro-highlights-header:not([hidden]) + pre.astro-highlights {
   margin: 0;
   padding: 1rem;
   border: 0;

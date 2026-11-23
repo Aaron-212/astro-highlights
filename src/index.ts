@@ -33,6 +33,12 @@ export default function highlights(options: HighlightsOptions = {}): AstroIntegr
 
         // Include CSS in each page's stylesheet metadata so ClientRouter can preserve it during navigation.
         injectScript("page-ssr", 'import "@aaron212/astro-highlights/styles.css";');
+        // Use the same browser module URL as the standalone component to register the handlers once.
+        injectScript(
+          "page",
+          'import astroHighlightsCopyUrl from "@aaron212/astro-highlights/copy?url&no-inline";\n' +
+            "void import(/* @vite-ignore */ astroHighlightsCopyUrl);",
+        );
       },
       "astro:config:done": ({ config }) => {
         const processor = config.markdown.processor;

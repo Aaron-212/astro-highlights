@@ -121,21 +121,56 @@ export function highlightsHast(options: HighlightsOptions = {}): HastPluginDefin
           },
           children: [{ ...code, properties: codeProperties, children }],
         };
-        if (!title) return pre;
-
-        pre.properties.role ??= "region";
-        if (pre.properties.ariaLabelledBy == null) pre.properties.ariaLabel ??= title;
+        if (title) {
+          pre.properties.role ??= "region";
+          if (pre.properties.ariaLabelledBy == null) pre.properties.ariaLabel ??= title;
+        }
 
         return {
           type: "element",
-          tagName: "figure",
+          tagName: title ? "figure" : "div",
           properties: { className: ["astro-highlights-frame"] },
           children: [
             {
               type: "element",
-              tagName: "figcaption",
-              properties: {},
-              children: [{ type: "text", value: title }],
+              tagName: title ? "figcaption" : "div",
+              properties: { className: ["astro-highlights-header"], hidden: !title },
+              children: [
+                ...(title
+                  ? [
+                      {
+                        type: "element",
+                        tagName: "span",
+                        properties: { className: ["astro-highlights-title"] },
+                        children: [{ type: "text", value: title }],
+                      } satisfies Element,
+                    ]
+                  : []),
+                {
+                  type: "element",
+                  tagName: "span",
+                  properties: { className: ["astro-highlights-copy-controls"] },
+                  children: [
+                    {
+                      type: "element",
+                      tagName: "button",
+                      properties: {
+                        type: "button",
+                        dataAstroHighlightsCopy: "",
+                        ariaLabel: title ? `Copy code from ${title}` : "Copy code",
+                        hidden: true,
+                      },
+                      children: [],
+                    },
+                    {
+                      type: "element",
+                      tagName: "span",
+                      properties: { className: ["astro-highlights-copy-status"], role: "status" },
+                      children: [],
+                    },
+                  ],
+                },
+              ],
             },
             pre,
           ],

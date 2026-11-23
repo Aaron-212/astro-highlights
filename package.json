@@ -17,6 +17,7 @@
   "files": [
     "dist",
     "src/components/*.astro",
+    "src/icons/*.svg",
     "src/styles.css"
   ],
   "type": "module",
@@ -26,6 +27,10 @@
       "import": "./dist/index.js"
     },
     "./components/Highlights.astro": "./src/components/Highlights.astro",
+    "./copy": {
+      "types": "./dist/copy.d.ts",
+      "import": "./dist/copy.js"
+    },
     "./satteri": {
       "types": "./dist/satteri.d.ts",
       "import": "./dist/satteri.js"
