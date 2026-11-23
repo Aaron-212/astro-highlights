@@ -57,6 +57,7 @@ pre.astro-highlights .line > .astro-highlights-line-number {
   display: flex;
   align-items: start;
   gap: 0.75rem;
+  margin-block-start: 0;
   padding: 0.5rem;
   border-block-end: 1px solid light-dark(#d4d4d4, #404040);
   border-radius: 0.5rem 0.5rem 0 0;
