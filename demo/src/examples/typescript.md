@@ -1,4 +1,4 @@
-```ts title="src/articles.ts"
+```ts title="src/articles.ts" copyButton=true
 interface Article {
   title: string;
   published: boolean;

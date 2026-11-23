@@ -16,7 +16,7 @@ const config = `import highlights from "@aaron212/astro-highlights";
 import { defineConfig } from "astro/config";
 
 export default defineConfig({
-  integrations: [highlights({ lineNumbers: true })],
+  integrations: [highlights({ lineNumbers: true, copyButton: false })],
 });`;
 ---
 
@@ -39,7 +39,8 @@ export default defineConfig({
         TypeScript in Markdown
       </h2>
       <p>
-        Add <code>title="src/articles.ts"</code> to the opening fence to show a filename.
+        Add <code>title="src/articles.ts"</code> to show the filename and <code>copyButton=true</code> to enable copying
+        for this fence.
       </p>
       <TypeScript />
     </section>
@@ -60,14 +61,15 @@ export default defineConfig({
         Astro component
       </h2>
       <p>
-        <code>&lt;Highlights&gt;</code> accepts a <code>title</code> prop and a <code>lineNumbers</code> override. This
-        example uses <code>lineNumbers={"{false}"}</code> and the GitHub Light and Dark themes.
+        Pass <code>copyButton={"{true}"}</code> to enable copying for this <code>&lt;Highlights&gt;</code> block. It
+        also uses <code>lineNumbers={"{false}"}</code> and the GitHub Light and Dark themes.
       </p>
       <Highlights
         code={html}
         lang="html"
         title="article.html"
         lineNumbers={false}
+        copyButton={true}
         themes={{ light: githubLight, dark: githubDark }}
       />
     </section>
@@ -85,7 +87,14 @@ export default defineConfig({
         Use in Astro
       </h2>
       <p>Install the package in your Astro project.</p>
-      <Highlights code={install} lang="sh" lineNumbers={false} role="region" aria-label="Install command" />
+      <Highlights
+        code={install}
+        lang="sh"
+        lineNumbers={false}
+        copyButton={true}
+        role="region"
+        aria-label="Install command"
+      />
       <p>
         Add the integration to <code>astro.config.ts</code>.
       </p>

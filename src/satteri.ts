@@ -12,6 +12,8 @@ export interface HighlightsOptions {
   langAlias?: Record<string, Lang>;
   /** Display line numbers by default. Defaults to false. */
   lineNumbers?: boolean;
+  /** Display the Copy button by default. Defaults to true. */
+  copyButton?: boolean;
   /** Additional languages to leave untouched. Math and Mermaid are always excluded. */
   excludeLangs?: string[];
 }
@@ -19,24 +21,28 @@ export interface HighlightsOptions {
 function getFenceOptions(meta: unknown) {
   let title: string | undefined;
   let lineNumbers: boolean | undefined;
-  if (typeof meta !== "string") return { title, lineNumbers };
+  let copyButton: boolean | undefined;
+  if (typeof meta !== "string") return { title, lineNumbers, copyButton };
 
   // Read whole metadata tokens so a quoted value cannot contain a separate option.
   const tokens = meta.matchAll(/(?:[^\s"']|"[^"]*(?:"|$)|'[^']*(?:'|$))+/g);
   for (const [token] of tokens) {
     if (token === "lineNumbers=true" || token === "lineNumbers=false") {
       lineNumbers = token === "lineNumbers=true";
+    } else if (token === "copyButton=true" || token === "copyButton=false") {
+      copyButton = token === "copyButton=true";
     } else if (title === undefined) {
       const match = /^title=(?:"([^"]*)"|'([^']*)')$/.exec(token);
       if (match) title = (match[1] ?? match[2]).trim();
     }
   }
-  return { title, lineNumbers };
+  return { title, lineNumbers, copyButton };
 }
 
 export function highlightsHast(options: HighlightsOptions = {}): HastPluginDefinition {
   const themes = options.themes ?? { light: pierreLight, dark: pierreDark };
   const defaultLineNumbers = options.lineNumbers ?? false;
+  const defaultCopyButton = options.copyButton ?? true;
   const excluded = new Set(["math", "mermaid", ...(options.excludeLangs ?? [])]);
 
   return defineHastPlugin({
@@ -66,6 +72,7 @@ export function highlightsHast(options: HighlightsOptions = {}): HastPluginDefin
         const fenceOptions = getFenceOptions(code.data && "meta" in code.data ? code.data.meta : undefined);
         const { title } = fenceOptions;
         const lineNumbers = fenceOptions.lineNumbers ?? defaultLineNumbers;
+        const copyButton = fenceOptions.copyButton ?? defaultCopyButton;
         const result = codeToTokens(ctx.textContent(code), { lang, themes, defaultColor: false });
         // Pierre emits an empty final token row for an empty source or a trailing newline.
         const lineCount = result.tokens.length - (result.tokens.at(-1)?.length === 0 ? 1 : 0);
@@ -121,9 +128,44 @@ export function highlightsHast(options: HighlightsOptions = {}): HastPluginDefin
           },
           children: [{ ...code, properties: codeProperties, children }],
         };
+        if (!title && !copyButton) return pre;
+
+        const headerChildren: ElementContent[] = [];
         if (title) {
           pre.properties.role ??= "region";
           if (pre.properties.ariaLabelledBy == null) pre.properties.ariaLabel ??= title;
+          headerChildren.push({
+            type: "element",
+            tagName: "span",
+            properties: { className: ["astro-highlights-title"] },
+            children: [{ type: "text", value: title }],
+          });
+        }
+        if (copyButton) {
+          headerChildren.push({
+            type: "element",
+            tagName: "span",
+            properties: { className: ["astro-highlights-copy-controls"] },
+            children: [
+              {
+                type: "element",
+                tagName: "button",
+                properties: {
+                  type: "button",
+                  dataAstroHighlightsCopy: "",
+                  ariaLabel: title ? `Copy code from ${title}` : "Copy code",
+                  hidden: true,
+                },
+                children: [],
+              },
+              {
+                type: "element",
+                tagName: "span",
+                properties: { className: ["astro-highlights-copy-status"], role: "status" },
+                children: [],
+              },
+            ],
+          });
         }
 
         return {
@@ -135,42 +177,7 @@ export function highlightsHast(options: HighlightsOptions = {}): HastPluginDefin
               type: "element",
               tagName: title ? "figcaption" : "div",
               properties: { className: ["astro-highlights-header"], hidden: !title },
-              children: [
-                ...(title
-                  ? [
-                      {
-                        type: "element",
-                        tagName: "span",
-                        properties: { className: ["astro-highlights-title"] },
-                        children: [{ type: "text", value: title }],
-                      } satisfies Element,
-                    ]
-                  : []),
-                {
-                  type: "element",
-                  tagName: "span",
-                  properties: { className: ["astro-highlights-copy-controls"] },
-                  children: [
-                    {
-                      type: "element",
-                      tagName: "button",
-                      properties: {
-                        type: "button",
-                        dataAstroHighlightsCopy: "",
-                        ariaLabel: title ? `Copy code from ${title}` : "Copy code",
-                        hidden: true,
-                      },
-                      children: [],
-                    },
-                    {
-                      type: "element",
-                      tagName: "span",
-                      properties: { className: ["astro-highlights-copy-status"], role: "status" },
-                      children: [],
-                    },
-                  ],
-                },
-              ],
+              children: headerChildren,
             },
             pre,
           ],

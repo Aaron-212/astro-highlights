@@ -42,7 +42,13 @@ export const port = 4321;
 
 For code in `.astro` files, pass `title="src/config.ts"` to `<Highlights />`.
 
-The code block header includes a **Copy** button with or without a filename. Clipboard access requires HTTPS or localhost.
+## Configure the Copy button
+
+The **Copy** button appears by default. Set `highlights({ copyButton: false })` to turn it off site-wide.
+
+Use `copyButton=true` or `copyButton=false` in a Markdown fence to override the default. In an Astro component, pass
+`copyButton={true}` or `copyButton={false}` to `<Highlights />`. A filename or an available **Copy** button keeps the
+code block header visible. Clipboard access requires HTTPS or localhost.
 
 ## Display line numbers
 

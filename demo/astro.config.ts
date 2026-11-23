@@ -8,5 +8,5 @@ export default defineConfig({
   outDir: "./build/astro-highlights",
   output: "static",
   vite: { plugins: [tailwindcss()] },
-  integrations: [highlights({ lineNumbers: true })],
+  integrations: [highlights({ lineNumbers: true, copyButton: false })],
 });

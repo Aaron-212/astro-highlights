@@ -7,6 +7,7 @@ import CodeFrame from "./CodeFrame.astro";
 import "../styles.css";
 
 declare const __ASTRO_HIGHLIGHTS_LINE_NUMBERS__: boolean;
+declare const __ASTRO_HIGHLIGHTS_COPY_BUTTON__: boolean;
 
 export interface Props extends Omit<HTMLAttributes<"pre">, "lang"> {
   /** Source code. Takes precedence over the default slot, including when empty. */
@@ -17,6 +18,8 @@ export interface Props extends Omit<HTMLAttributes<"pre">, "lang"> {
   title?: string;
   /** Override the integration's default for displaying line numbers. */
   lineNumbers?: boolean;
+  /** Override the integration's default for displaying the Copy button. */
+  copyButton?: boolean;
   /** Defaults to Pierre Light and Pierre Dark. */
   themes?: {
     light: Theme | ThemeFamily;
@@ -29,6 +32,7 @@ const {
   lang = "plaintext",
   title,
   lineNumbers = typeof __ASTRO_HIGHLIGHTS_LINE_NUMBERS__ !== "undefined" && __ASTRO_HIGHLIGHTS_LINE_NUMBERS__,
+  copyButton = typeof __ASTRO_HIGHLIGHTS_COPY_BUTTON__ === "undefined" || __ASTRO_HIGHLIGHTS_COPY_BUTTON__,
   themes = { light: pierreLight, dark: pierreDark },
   class: className,
   style,
@@ -57,7 +61,7 @@ const role = attributes.role ?? (caption ? "region" : undefined);
 const label = attributes["aria-label"] ?? (attributes["aria-labelledby"] ? undefined : caption);
 ---
 
-<CodeFrame title={caption}>
+<CodeFrame title={caption} copyButton={copyButton}>
   <pre
     {...attributes}
     class:list={["astro-highlights", className]}

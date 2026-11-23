@@ -20,6 +20,7 @@ export default function highlights(options: HighlightsOptions = {}): AstroIntegr
           vite: {
             define: {
               __ASTRO_HIGHLIGHTS_LINE_NUMBERS__: JSON.stringify(options.lineNumbers ?? false),
+              __ASTRO_HIGHLIGHTS_COPY_BUTTON__: JSON.stringify(options.copyButton ?? true),
             },
           },
           markdown: {
