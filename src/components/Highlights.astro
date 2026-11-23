@@ -27,8 +27,12 @@ const {
   ...attributes
 } = Astro.props;
 const source = code ?? (await Astro.slots.render("default")) ?? "";
+const supported = isSupportedLanguage(lang);
+if (!supported) {
+  console.warn(`[astro-highlights] Unsupported language ${JSON.stringify(lang)}. Rendering as plain text.`);
+}
 const result = codeToTokens(source, {
-  lang: isSupportedLanguage(lang) ? lang : "plaintext",
+  lang: supported ? lang : "plaintext",
   themes,
   defaultColor: false,
 });

@@ -37,7 +37,11 @@ export function highlightsHast(options: HighlightsOptions = {}): HastPluginDefin
           typeof dataLanguage === "string" ? dataLanguage : (languageClass?.slice("language-".length) ?? "plaintext");
         if (excluded.has(language)) return;
         const alias = options.langAlias?.[language] ?? language;
-        const lang = isSupportedLanguage(alias) ? alias : "plaintext";
+        const supported = isSupportedLanguage(alias);
+        if (!supported) {
+          console.warn(`[astro-highlights] Unsupported language ${JSON.stringify(alias)}. Rendering as plain text.`);
+        }
+        const lang = supported ? alias : "plaintext";
         const result = codeToTokens(ctx.textContent(code), { lang, themes, defaultColor: false });
         const children: ElementContent[] = [];
 
