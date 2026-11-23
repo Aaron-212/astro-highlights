@@ -42,6 +42,27 @@ export const port = 4321;
 
 For code in `.astro` files, pass `title="src/config.ts"` to `<Highlights />`.
 
+## Display line numbers
+
+Set `lineNumbers` in your Astro integration config to choose the default for Markdown and `<Highlights />`. The default
+is `false`, including when you use `<Highlights />` on its own.
+
+```ts
+export default defineConfig({
+  integrations: [highlights({ lineNumbers: true })],
+});
+```
+
+Add `lineNumbers=true` or `lineNumbers=false` to an opening fence to override the default for that block.
+
+````markdown
+```ts title="src/config.ts" lineNumbers=false
+export const port = 4321;
+```
+````
+
+For code in `.astro` files, use `<Highlights lineNumbers={true} />` or `<Highlights lineNumbers={false} />`.
+
 ## Highlight code in Astro components
 
 Import `Highlights.astro` and use `is:raw` to write literal source code between the component's tags.
@@ -63,7 +84,7 @@ with Astro's ClientRouter. Source code is escaped as text, including HTML tags.
 
 The default language is plain text; unknown languages also fall back to plain text. The default themes are Pierre Light
 and Pierre Dark. Pass `themes={{ light: githubLight, dark: githubDark }}` to override both themes using imports from
-`@aaron212/astro-highlights/themes`. Integration options configure Markdown; component themes are configured through props.
+`@aaron212/astro-highlights/themes`. Set component themes through props.
 Standard `<pre>` attributes, including `class`, `style`, and `aria-label`, are forwarded. Code blocks are keyboard-focusable
 by default; pass `tabindex` to override this.
 

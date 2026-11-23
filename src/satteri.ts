@@ -10,25 +10,33 @@ export interface HighlightsOptions {
     dark: Theme | ThemeFamily;
   };
   langAlias?: Record<string, Lang>;
+  /** Display line numbers by default. Defaults to false. */
+  lineNumbers?: boolean;
   /** Additional languages to leave untouched. Math and Mermaid are always excluded. */
   excludeLangs?: string[];
 }
 
-function getFenceTitle(meta: unknown): string | undefined {
-  if (typeof meta !== "string") return;
+function getFenceOptions(meta: unknown) {
+  let title: string | undefined;
+  let lineNumbers: boolean | undefined;
+  if (typeof meta !== "string") return { title, lineNumbers };
 
-  // Read whole metadata tokens so a quoted option value cannot contain a separate title option.
+  // Read whole metadata tokens so a quoted value cannot contain a separate option.
   const tokens = meta.matchAll(/(?:[^\s"']|"[^"]*(?:"|$)|'[^']*(?:'|$))+/g);
   for (const [token] of tokens) {
-    const title = /^title=(?:"([^"]*)"|'([^']*)')$/.exec(token);
-    if (title) {
-      return (title[1] ?? title[2]).trim() || undefined;
+    if (token === "lineNumbers=true" || token === "lineNumbers=false") {
+      lineNumbers = token === "lineNumbers=true";
+    } else if (title === undefined) {
+      const match = /^title=(?:"([^"]*)"|'([^']*)')$/.exec(token);
+      if (match) title = (match[1] ?? match[2]).trim();
     }
   }
+  return { title, lineNumbers };
 }
 
 export function highlightsHast(options: HighlightsOptions = {}): HastPluginDefinition {
   const themes = options.themes ?? { light: pierreLight, dark: pierreDark };
+  const defaultLineNumbers = options.lineNumbers ?? false;
   const excluded = new Set(["math", "mermaid", ...(options.excludeLangs ?? [])]);
 
   return defineHastPlugin({
@@ -55,28 +63,54 @@ export function highlightsHast(options: HighlightsOptions = {}): HastPluginDefin
           console.warn(`[astro-highlights] Unsupported language ${JSON.stringify(alias)}. Rendering as plain text.`);
         }
         const lang = supported ? alias : "plaintext";
+        const fenceOptions = getFenceOptions(code.data && "meta" in code.data ? code.data.meta : undefined);
+        const { title } = fenceOptions;
+        const lineNumbers = fenceOptions.lineNumbers ?? defaultLineNumbers;
         const result = codeToTokens(ctx.textContent(code), { lang, themes, defaultColor: false });
+        // Pierre emits an empty final token row for an empty source or a trailing newline.
+        const lineCount = result.tokens.length - (result.tokens.at(-1)?.length === 0 ? 1 : 0);
         const children: ElementContent[] = [];
 
         for (const [index, line] of result.tokens.entries()) {
+          const lineChildren = line.map((token): Element => ({
+            type: "element",
+            tagName: "span",
+            properties: {
+              style: Object.entries(token.htmlStyle ?? {})
+                .map(([property, value]) => `${property}:${value}`)
+                .join(";"),
+            },
+            children: [{ type: "text", value: token.content }],
+          }));
+          if (lineNumbers && index < lineCount) {
+            lineChildren.unshift({
+              type: "element",
+              tagName: "span",
+              properties: {
+                className: ["astro-highlights-line-number"],
+                ariaHidden: "true",
+                dataLineNumber: index + 1,
+              },
+              children: [],
+            });
+          }
           if (index > 0) children.push({ type: "text", value: "\n" });
           children.push({
             type: "element",
             tagName: "span",
             properties: { className: ["line"] },
-            children: line.map((token): Element => ({
-              type: "element",
-              tagName: "span",
-              properties: {
-                style: Object.entries(token.htmlStyle ?? {})
-                  .map(([property, value]) => `${property}:${value}`)
-                  .join(";"),
-              },
-              children: [{ type: "text", value: token.content }],
-            })),
+            children: lineChildren,
           });
         }
 
+        const codeProperties = lineNumbers
+          ? {
+              ...code.properties,
+              style: [code.properties.style, `--astro-highlights-gutter-width:${String(lineCount).length}ch`]
+                .filter(Boolean)
+                .join(";"),
+            }
+          : code.properties;
         const pre: Element = {
           ...node,
           properties: {
@@ -85,9 +119,8 @@ export function highlightsHast(options: HighlightsOptions = {}): HastPluginDefin
             tabIndex: node.properties.tabIndex ?? 0,
             style: [node.properties.style, result.rootStyle].filter(Boolean).join(";"),
           },
-          children: [{ ...code, children }],
+          children: [{ ...code, properties: codeProperties, children }],
         };
-        const title = getFenceTitle(code.data && "meta" in code.data ? code.data.meta : undefined);
         if (!title) return pre;
 
         pre.properties.role ??= "region";

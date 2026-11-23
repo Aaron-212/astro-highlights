@@ -6,6 +6,8 @@ import type { HTMLAttributes } from "astro/types";
 import CodeFrame from "./CodeFrame.astro";
 import "../styles.css";
 
+declare const __ASTRO_HIGHLIGHTS_LINE_NUMBERS__: boolean;
+
 export interface Props extends Omit<HTMLAttributes<"pre">, "lang"> {
   /** Source code. Takes precedence over the default slot, including when empty. */
   code?: string;
@@ -13,6 +15,8 @@ export interface Props extends Omit<HTMLAttributes<"pre">, "lang"> {
   lang?: string;
   /** Filename to display above the code in a frame. */
   title?: string;
+  /** Override the integration's default for displaying line numbers. */
+  lineNumbers?: boolean;
   /** Defaults to Pierre Light and Pierre Dark. */
   themes?: {
     light: Theme | ThemeFamily;
@@ -24,6 +28,7 @@ const {
   code,
   lang = "plaintext",
   title,
+  lineNumbers = typeof __ASTRO_HIGHLIGHTS_LINE_NUMBERS__ !== "undefined" && __ASTRO_HIGHLIGHTS_LINE_NUMBERS__,
   themes = { light: pierreLight, dark: pierreDark },
   class: className,
   style,
@@ -40,6 +45,9 @@ const result = codeToTokens(source, {
   themes,
   defaultColor: false,
 });
+// Pierre emits an empty final token row for an empty source or a trailing newline.
+const lineCount = result.tokens.length - (result.tokens.at(-1)?.length === 0 ? 1 : 0);
+const gutterStyle = lineNumbers ? { "--astro-highlights-gutter-width": `${String(lineCount).length}ch` } : undefined;
 const themeStyles = Object.fromEntries(
   (result.rootStyle ?? "").split(";").map((declaration) => declaration.split(":")),
 );
@@ -59,5 +67,6 @@ const label = attributes["aria-label"] ?? (attributes["aria-labelledby"] ? undef
     aria-label={label}
   ><code
       class={`language-${lang}`}
-    >{result.tokens.map((line, index) => <Fragment>{index > 0 ? "\n" : ""}<span class="line">{line.map((token) => <span style={token.htmlStyle}>{token.content}</span>)}</span></Fragment>)}</code></pre>
+      style={gutterStyle}
+    >{result.tokens.map((line, index) => <Fragment>{index > 0 ? "\n" : ""}<span class="line">{lineNumbers && index < lineCount && <span class="astro-highlights-line-number" aria-hidden="true" data-line-number={index + 1}></span>}{line.map((token) => <span style={token.htmlStyle}>{token.content}</span>)}</span></Fragment>)}</code></pre>
 </CodeFrame>

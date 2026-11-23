@@ -17,6 +17,11 @@ export default function highlights(options: HighlightsOptions = {}): AstroIntegr
         }
 
         updateConfig({
+          vite: {
+            define: {
+              __ASTRO_HIGHLIGHTS_LINE_NUMBERS__: JSON.stringify(options.lineNumbers ?? false),
+            },
+          },
           markdown: {
             syntaxHighlight: false,
             processor: satteri({

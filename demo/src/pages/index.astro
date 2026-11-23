@@ -16,7 +16,7 @@ const config = `import highlights from "@aaron212/astro-highlights";
 import { defineConfig } from "astro/config";
 
 export default defineConfig({
-  integrations: [highlights()],
+  integrations: [highlights({ lineNumbers: true })],
 });`;
 ---
 
@@ -38,6 +38,9 @@ export default defineConfig({
       <h2 id="markdown" class="text-xl font-semibold">
         TypeScript in Markdown
       </h2>
+      <p>
+        Add <code>title="src/articles.ts"</code> to the opening fence to show a filename.
+      </p>
       <TypeScript />
     </section>
 
@@ -46,7 +49,8 @@ export default defineConfig({
         Line numbers
       </h2>
       <p>
-        Add <code>lineNumbers=true</code> to the opening fence to number its lines.
+        This demo sets <code>lineNumbers: true</code> in <code>astro.config.ts</code>. Override the default on a fence
+        with <code>lineNumbers=true</code> or <code>lineNumbers=false</code>, as in this example.
       </p>
       <LineNumbers />
     </section>
@@ -56,15 +60,23 @@ export default defineConfig({
         Astro component
       </h2>
       <p>
-        <code>&lt;Highlights&gt;</code> renders this HTML example with the GitHub Light and Dark themes.
+        <code>&lt;Highlights&gt;</code> accepts a <code>title</code> prop and a <code>lineNumbers</code> override. This
+        example uses <code>lineNumbers={"{false}"}</code> and the GitHub Light and Dark themes.
       </p>
-      <Highlights code={html} lang="html" title="article.html" themes={{ light: githubLight, dark: githubDark }} />
+      <Highlights
+        code={html}
+        lang="html"
+        title="article.html"
+        lineNumbers={false}
+        themes={{ light: githubLight, dark: githubDark }}
+      />
     </section>
 
     <section class="space-y-3" aria-labelledby="long-codes">
       <h2 id="long-codes" class="text-xl font-semibold">
-        Long codes
+        Horizontally scrolling code
       </h2>
+      <p>Scroll the code to see the line numbers stay in view.</p>
       <LongCodes />
     </section>
 
@@ -73,11 +85,11 @@ export default defineConfig({
         Use in Astro
       </h2>
       <p>Install the package in your Astro project.</p>
-      <Highlights code={install} lang="sh" role="region" aria-label="Install command" />
+      <Highlights code={install} lang="sh" lineNumbers={false} role="region" aria-label="Install command" />
       <p>
         Add the integration to <code>astro.config.ts</code>.
       </p>
-      <Highlights code={config} lang="ts" role="region" aria-label="Astro configuration" />
+      <Highlights code={config} lang="ts" title="astro.config.ts" />
     </section>
   </div>
 </Layout>
