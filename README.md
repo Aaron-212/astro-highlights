@@ -125,6 +125,62 @@ helper.
 Highlights supports its built-in lexers; this integration does not apply Shiki grammars, transformers, or fence metadata
 such as highlighted-line ranges. Fence metadata remains available to downstream HAST plugins.
 
+## Set colors in a stylesheet
+
+To set syntax colors in CSS, pass the `cssVariables` theme for both light and dark modes in `astro.config.ts`.
+
+```ts
+import highlights from "@aaron212/astro-highlights";
+import { cssVariables } from "@aaron212/astro-highlights/themes";
+import { defineConfig } from "astro/config";
+
+const themes = { light: cssVariables, dark: cssVariables };
+
+export default defineConfig({ integrations: [highlights({ themes })] });
+```
+
+Pass the same `themes` object to `highlightsHast({ themes })` when using Sätteri directly. For a standalone
+`<Highlights />` component, import `cssVariables` in the `.astro` file and pass
+`themes={{ light: cssVariables, dark: cssVariables }}`.
+
+Import your palette stylesheet from a shared layout or site entry point. Set the properties on `:root` to apply them
+site-wide, or on a wrapper to limit them to its code blocks. With `cssVariables`, tokens without a defined color inherit
+the code block's foreground. Use `toCSS(theme)` to generate a full set of declarations from a bundled theme.
+
+```css
+:root {
+  --hls-background: #f8fafc;
+  --hls-foreground: #1e293b;
+  --hls-keyword-declaration: #6d28d9;
+  --hls-number: #9a3412;
+  --astro-highlights-header-background: #e2e8f0;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --hls-background: #0f172a;
+    --hls-foreground: #e2e8f0;
+    --hls-keyword-declaration: #c4b5fd;
+    --hls-number: #fdba74;
+    --astro-highlights-header-background: #1e293b;
+  }
+}
+```
+
+The following properties work with any syntax theme and apply to Markdown and `<Highlights />` code blocks.
+
+| Property                                   | Controls                                              |
+| ------------------------------------------ | ----------------------------------------------------- |
+| `--astro-highlights-background`            | Code block and line-number gutter background          |
+| `--astro-highlights-foreground`            | Base text and line-number color                       |
+| `--astro-highlights-border`                | Frame border and header divider                       |
+| `--astro-highlights-header-background`     | Header background                                     |
+| `--astro-highlights-header-foreground`     | Filename and default copy control text and icon color |
+| `--astro-highlights-copy-background`       | Copy button and feedback background                   |
+| `--astro-highlights-copy-hover-background` | Copy button background on hover                       |
+| `--astro-highlights-copy-foreground`       | Copy button icon and feedback text color              |
+| `--astro-highlights-copy-border`           | Copy button and feedback border                       |
+
 ## Use with Sätteri directly
 
 Add `highlightsHast()` to your Sätteri pipeline:

@@ -1,8 +1,8 @@
 pre.astro-highlights {
-  --astro-highlights-background: var(--hls-light-bg);
+  --astro-highlights-theme-background: var(--hls-light-bg);
   color-scheme: light dark;
-  color: var(--hls-light);
-  background-color: var(--astro-highlights-background);
+  color: var(--astro-highlights-foreground, var(--hls-light));
+  background-color: var(--astro-highlights-background, var(--astro-highlights-theme-background));
   overflow-x: auto;
 }
 
@@ -21,7 +21,7 @@ pre.astro-highlights .line > .astro-highlights-line-number {
   font: inherit;
   font-variant-numeric: tabular-nums;
   color: inherit;
-  background-color: var(--astro-highlights-background, Canvas);
+  background-color: var(--astro-highlights-background, var(--astro-highlights-theme-background, Canvas));
   user-select: none;
 }
 
@@ -49,7 +49,7 @@ pre.astro-highlights .line > .astro-highlights-line-number {
   color-scheme: light dark;
   min-inline-size: 0;
   margin-inline: 0;
-  border: 1px solid light-dark(#d4d4d4, #404040);
+  border: 1px solid var(--astro-highlights-border, light-dark(#d4d4d4, #404040));
   border-radius: 0.5rem;
 }
 
@@ -59,10 +59,10 @@ pre.astro-highlights .line > .astro-highlights-line-number {
   gap: 0.75rem;
   margin-block-start: 0;
   padding: 0.5rem;
-  border-block-end: 1px solid light-dark(#d4d4d4, #404040);
+  border-block-end: 1px solid var(--astro-highlights-border, light-dark(#d4d4d4, #404040));
   border-radius: 0.5rem 0.5rem 0 0;
-  color: light-dark(#262626, #e5e5e5);
-  background-color: light-dark(#f5f5f5, #262626);
+  color: var(--astro-highlights-header-foreground, light-dark(#262626, #e5e5e5));
+  background-color: var(--astro-highlights-header-background, light-dark(#f5f5f5, #262626));
   font:
     0.875rem/1.5 ui-monospace,
     monospace;
@@ -84,10 +84,10 @@ pre.astro-highlights .line > .astro-highlights-line-number {
 [data-astro-highlights-copy],
 .astro-highlights-copy-status {
   padding-inline: 0.5rem;
-  border: 1px solid light-dark(#d4d4d4, #737373);
+  border: 1px solid var(--astro-highlights-copy-border, light-dark(#d4d4d4, #737373));
   border-radius: 0.25rem;
-  color: inherit;
-  background-color: light-dark(#fff, #171717);
+  color: var(--astro-highlights-copy-foreground, inherit);
+  background-color: var(--astro-highlights-copy-background, light-dark(#fff, #171717));
   font: inherit;
 }
 
@@ -119,7 +119,7 @@ pre.astro-highlights .line > .astro-highlights-line-number {
 }
 
 [data-astro-highlights-copy]:hover {
-  background-color: light-dark(#e5e5e5, #404040);
+  background-color: var(--astro-highlights-copy-hover-background, light-dark(#e5e5e5, #404040));
 }
 
 .astro-highlights-copy-status {
@@ -145,8 +145,8 @@ pre.astro-highlights .line > .astro-highlights-line-number {
 
 @media (prefers-color-scheme: dark) {
   pre.astro-highlights {
-    --astro-highlights-background: var(--hls-dark-bg);
-    color: var(--hls-dark);
+    --astro-highlights-theme-background: var(--hls-dark-bg);
+    color: var(--astro-highlights-foreground, var(--hls-dark));
   }
 
   pre.astro-highlights .line > span {
